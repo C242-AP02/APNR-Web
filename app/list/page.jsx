@@ -95,16 +95,16 @@ export default function VehicleList() {
       <div className="overflow-x-auto bg-white shadow-md rounded-lg">
         <table {...getTableProps()} className="min-w-full">
           <thead>
-            {headerGroups.map(headerGroup => (
-              <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
-                {headerGroup.headers.map(column => (
-                  <th
-                    {...column.getHeaderProps()}
-                    className="py-3 px-6 text-left text-sm font-medium text-gray-900 border-b"
-                    key={column.id}
-                  >
-                    {column.render("Header")}
-                  </th>
+            {headerGroups.map((headerGroup, groupIndex) => (
+              <tr {...headerGroup.getHeaderGroupProps()} key={groupIndex}>
+                {headerGroup.headers.map((column, colIndex) => (
+                    <th
+                      {...column.getHeaderProps()}
+                      className="py-3 px-6 text-left text-sm font-bold text-gray-600 border-b"
+                      key={colIndex}
+                    >
+                      {column.render("Header")}
+                    </th>
                 ))}
               </tr>
             ))}

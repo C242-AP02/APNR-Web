@@ -4,21 +4,19 @@ import { FaCalendar, FaMapMarkerAlt, FaCar } from "react-icons/fa";
 import Image from "next/image"; // Import the Image component from Next.js
 
 export default function VehicleDetail() {
-  // Dummy data for vehicle
   const vehicle = {
     plateNumber: "B1234XYZ",
     region: "Jakarta",
-    date: 1635769200000, // Timestamp in milliseconds
+    date: 1635769200000,
     vehicleType: "Car",
-    imageUrl: "https://via.placeholder.com/600x400.png?text=Vehicle+Detection+Image", // Dummy image URL
+    imageUrl: "https://via.placeholder.com/600x400.png?text=Vehicle+Detection+Image",
   };
 
-  // Formatting the date
   const [formattedDate, setFormattedDate] = useState(null);
 
   useEffect(() => {
     const date = new Date(vehicle.date);
-    setFormattedDate(date.toLocaleString()); // Convert timestamp to formatted date string
+    setFormattedDate(date.toLocaleString());
   }, [vehicle.date]);
 
   return (
@@ -31,8 +29,8 @@ export default function VehicleDetail() {
           <Image
             src={vehicle.imageUrl}
             alt={`Detection of ${vehicle.plateNumber}`}
-            width={600} // Define the width
-            height={400} // Define the height
+            width={600}
+            height={400}
             className="w-full h-auto rounded-lg shadow-lg"
           />
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
+import { FaImage } from "react-icons/fa";
 
 export default function ImagesPage() {
   const [image, setImage] = useState(null);
@@ -11,9 +11,11 @@ export default function ImagesPage() {
 
   const handleDragEnter = () => setDragging(true);
   const handleDragLeave = () => setDragging(false);
+  const handleDragOver = (e) => e.preventDefault();
   const handleDrop = (e) => {
     e.preventDefault();
     setDragging(false);
+
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
@@ -43,7 +45,6 @@ export default function ImagesPage() {
 
   const handleUrlChange = (e) => {
     setImageUrl(e.target.value);
-    handleUrlSubmit
   };
 
   const handleUrlSubmit = () => {
@@ -71,9 +72,17 @@ export default function ImagesPage() {
         }`}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
+        onDragOver={handleDragOver} // Tambahkan handler ini
+        onDrop={handleDrop} // Pastikan preventDefault dipanggil di sini
       >
-        <p className="text-center text-lg font-medium text-gray-700">Drag and drop your image here</p>
+        <p className="text-center text-lg font-medium text-gray-700">
+          Drag and drop your image here
+        </p>
+
+        <div className="flex justify-center my-4">
+          <FaImage className="text-gray-600 text-8xl" />
+        </div>
+
         <input
           type="file"
           accept="image/*"
@@ -112,22 +121,23 @@ export default function ImagesPage() {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-lg mt-6">
-        {image && isValidImage ? (
+      {image && isValidImage ? (
+        <div className="bg-white p-6 rounded-lg shadow-lg mt-6">
           <div className="flex justify-center">
-            <Image
+            <img
               src={image}
               alt="Uploaded"
               className="max-w-full max-h-96 object-contain rounded-lg shadow-md"
             />
           </div>
-        ) : (
-          !isValidImage && (
+        </div>
+      ) : (
+        !isValidImage && (
+          <div className="bg-white p-6 rounded-lg shadow-lg mt-6">
             <p className="text-red-500 font-medium">Invalid image or URL. Please upload a valid image.</p>
-          )
-        )}
-      </div>
-
+          </div>
+        )
+      )}
       <div className="flex justify-center mt-6">
         <button
           onClick={handleCheckPlateNumber}

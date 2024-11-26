@@ -3,20 +3,20 @@
 import { usePathname } from 'next/navigation';
 import localFont from "next/font/local";
 import "./globals.css";
-import Sidebar from "@/components/sidebar";
-import TopBar from "@/components/topbar";
 import { useState } from 'react';
+import Sidebar from '@/components/sidebar';
+import TopBar from '@/components/topbar';
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+// const geistSans = localFont({
+//   src: "./fonts/GeistVF.woff",
+//   variable: "--font-geist-sans",
+//   weight: "100 900",
+// });
+// const geistMono = localFont({
+//   src: "./fonts/GeistMonoVF.woff",
+//   variable: "--font-geist-mono",
+//   weight: "100 900",
+// });
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
@@ -24,10 +24,12 @@ export default function RootLayout({ children }) {
 
   const isLandingPage = pathname === "/";
 
+  // <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+
   if (isLandingPage) {
     return (
       <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          <body className='antialiased'>
           {children}
         </body>
       </html>
@@ -36,7 +38,7 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex`}>
+      <body className={`antialiased flex`}>
         <Sidebar 
           isSidebarOpen={isSidebarOpen} 
           setIsSidebarOpen={setIsSidebarOpen} 
