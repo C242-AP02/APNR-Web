@@ -37,15 +37,15 @@ export default function Dashboard() {
           <p className="text-4xl font-bold">125</p>
         </div>
 
-        <div className="bg-green-500 text-white p-4 rounded-lg shadow-md">
+        <div className="bg-indigo-700 text-white p-4 rounded-lg shadow-md">
           <h2 className="text-lg font-medium mb-2">Total Vehicle Recognized from Videos</h2>
           <p className="text-4xl font-bold">200</p>
         </div>
 
-        <div className="bg-gray-200 text-black p-4 rounded-lg shadow-md">
+        {/* <div className="bg-gray-200 text-black p-4 rounded-lg shadow-md">
           <h2 className="text-lg font-medium mb-2">Confidence Level</h2>
           <p className="text-4xl font-bold">{confidenceLevel}</p>
-        </div>
+        </div> */}
       </div>
 
       {/* Column 2: Graphs */}
@@ -92,7 +92,7 @@ export default function Dashboard() {
             options={{
               chart: { type: "bar" },
               xaxis: { categories: topRegionsData.labels },
-              colors: ["#82ca9d"],
+              colors: ["#4338ca"],
             }}
             series={topRegionsData.series}
             type="bar"

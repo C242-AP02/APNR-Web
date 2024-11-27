@@ -46,7 +46,7 @@ export default function VehicleList() {
         accessor: "region",
       },
       {
-        Header: "Date",
+        Header: "Date and Time",
         accessor: "date",
         Cell: ({ value }) => {
           const [formattedDate, setFormattedDate] = useState(null);
@@ -67,7 +67,10 @@ export default function VehicleList() {
         Header: "Actions",
         accessor: "detailUrl",
         Cell: ({ value }) => (
-          <a href={value} className="text-blue-500 hover:text-blue-700 flex items-center space-x-2">
+          <a
+            href={value}
+            className="text-blue-500 hover:text-blue-700 flex items-center space-x-2"
+          >
             <FaEye /> <span>Detail</span>
           </a>
         ),
@@ -88,37 +91,47 @@ export default function VehicleList() {
   });
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-6">Vehicle List</h1>
+    <div className="p-6 flex flex-col items-center">
+      <h1 className="text-3xl font-bold text-indigo-800 mb-6">Vehicle List</h1>
 
       {/* Table */}
-      <div className="overflow-x-auto bg-white shadow-md rounded-lg">
-        <table {...getTableProps()} className="min-w-full">
-          <thead>
+      <div className="overflow-x-auto bg-white shadow-lg rounded-lg w-full max-w-5xl">
+        <table
+          {...getTableProps()}
+          className="min-w-full border-collapse border border-gray-200"
+        >
+          <thead className="bg-gradient-to-r from-blue-500 to-blue-700 text-white">
             {headerGroups.map((headerGroup, groupIndex) => (
               <tr {...headerGroup.getHeaderGroupProps()} key={groupIndex}>
                 {headerGroup.headers.map((column, colIndex) => (
-                    <th
-                      {...column.getHeaderProps()}
-                      className="py-3 px-6 text-left text-sm font-bold text-gray-600 border-b"
-                      key={colIndex}
-                    >
-                      {column.render("Header")}
-                    </th>
+                  <th
+                    {...column.getHeaderProps()}
+                    className="py-4 px-6 text-left text-sm font-semibold uppercase tracking-wide"
+                    key={colIndex}
+                  >
+                    {column.render("Header")}
+                  </th>
                 ))}
               </tr>
             ))}
           </thead>
 
-          <tbody {...getTableBodyProps()}>
-            {rows.map(row => {
+          <tbody
+            {...getTableBodyProps()}
+            className="bg-white divide-y divide-gray-200"
+          >
+            {rows.map((row) => {
               prepareRow(row);
               return (
-                <tr {...row.getRowProps()} key={row.id}>
-                  {row.cells.map(cell => (
+                <tr
+                  {...row.getRowProps()}
+                  key={row.id}
+                  className="hover:bg-gray-100 transition-colors"
+                >
+                  {row.cells.map((cell) => (
                     <td
                       {...cell.getCellProps()}
-                      className="py-3 px-6 text-sm text-gray-700 border-b"
+                      className="py-4 px-6 text-sm text-gray-800"
                       key={`${cell.row.id}-${cell.column.id}`}
                     >
                       {cell.render("Cell")}

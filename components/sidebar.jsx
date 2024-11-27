@@ -25,10 +25,9 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
     >
       {/* Logo Section */}
       <div
-        className="text-2xl font-semibold cursor-pointer mb-6"
+        className="text-xl font-bold cursor-pointer mb-6"
         onClick={handleLogoClick}
-      >
-        A
+      >APNR
       </div>
 
       <button
