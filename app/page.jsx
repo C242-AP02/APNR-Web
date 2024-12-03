@@ -3,6 +3,7 @@ import { FaCamera, FaDatabase, FaCheckCircle, FaFileAlt, FaCogs } from "react-ic
 import { FaArrowRight } from "react-icons/fa";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import LoginButton from "@/components/login_button";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -36,12 +37,7 @@ export default function LandingPage() {
               </li>
             </ul>
           </nav>
-          <button
-            onClick={handleClick}
-            className="bg-blue-600 text-white py-2 px-6 rounded-full hover:bg-blue-700"
-          >
-            Get Started
-          </button>
+          <LoginButton />
         </div>
       </header>
 

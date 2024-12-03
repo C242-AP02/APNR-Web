@@ -6,6 +6,7 @@ import "./globals.css";
 import { useState } from 'react';
 import Sidebar from '@/components/sidebar';
 import TopBar from '@/components/topbar';
+import NextTopLoader from 'nextjs-toploader';
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -20,7 +21,7 @@ import TopBar from '@/components/topbar';
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const isLandingPage = pathname === "/";
 
@@ -37,16 +38,17 @@ export default function RootLayout({ children }) {
   }
 
   return (
-    <html lang="en">
-      <body className={`antialiased flex`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`antialiased flex w-screen overflow-x-hidden`}>
         <Sidebar 
           isSidebarOpen={isSidebarOpen} 
           setIsSidebarOpen={setIsSidebarOpen} 
         />
 
-        <div className={`flex-1 flex flex-col ${isSidebarOpen ? "ml-64" : "ml-16"}`}>
-          <TopBar isSidebarOpen={isSidebarOpen} />
-          <main className="flex-1 p-6 mt-24">
+        <div className={`w-full ${isSidebarOpen ? "sm:ml-64" : "sm:ml-20"}`}>
+          <NextTopLoader />
+          <TopBar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+          <main className="flex mt-24 w-full">
             {children}
           </main>
         </div>

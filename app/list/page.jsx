@@ -59,10 +59,10 @@ export default function VehicleList() {
           return formattedDate ? formattedDate : "Loading...";
         },
       },
-      {
-        Header: "Vehicle Type",
-        accessor: "vehicleType",
-      },
+      // {
+      //   Header: "Vehicle Type",
+      //   accessor: "vehicleType",
+      // },
       {
         Header: "Actions",
         accessor: "detailUrl",
@@ -91,11 +91,11 @@ export default function VehicleList() {
   });
 
   return (
-    <div className="p-6 flex flex-col items-center">
+    <div className="w-full p-6 flex flex-col items-center">
       <h1 className="text-3xl font-bold text-indigo-800 mb-6">Vehicle List</h1>
 
       {/* Table */}
-      <div className="overflow-x-auto bg-white shadow-lg rounded-lg w-full max-w-5xl">
+      <div className="overflow-auto bg-white shadow-lg rounded-lg w-full max-w-5xl">
         <table
           {...getTableProps()}
           className="min-w-full border-collapse border border-gray-200"

@@ -29,75 +29,78 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-      {/* Column 1: Total Recognized and Confidence */}
-      <div className="space-y-6 md:col-span-1">
-        <div className="bg-blue-500 text-white p-4 rounded-lg shadow-md">
-          <h2 className="text-lg font-medium mb-2">Total Vehicle Recognized from Images</h2>
-          <p className="text-4xl font-bold">125</p>
-        </div>
+    <div className="w-full p-6">
 
-        <div className="bg-indigo-700 text-white p-4 rounded-lg shadow-md">
-          <h2 className="text-lg font-medium mb-2">Total Vehicle Recognized from Videos</h2>
-          <p className="text-4xl font-bold">200</p>
-        </div>
-
-        {/* <div className="bg-gray-200 text-black p-4 rounded-lg shadow-md">
-          <h2 className="text-lg font-medium mb-2">Confidence Level</h2>
-          <p className="text-4xl font-bold">{confidenceLevel}</p>
-        </div> */}
-      </div>
-
-      {/* Column 2: Graphs */}
-      <div className="space-y-6 md:col-span-2">
-        {/* Dynamic Graph */}
-        <div className="bg-white shadow-md p-6 rounded-lg">
-          <h2 className="text-xl font-semibold mb-4">Vehicle Detection</h2>
-
-          {/* Interval Selection */}
-          <div className="flex space-x-2 mb-4">
-            {["daily", "weekly", "monthly"].map((interval) => (
-              <button
-                key={interval}
-                className={`px-4 py-2 rounded ${
-                  selectedInterval === interval
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200 text-black"
-                }`}
-                onClick={() => setSelectedInterval(interval)}
-              >
-                {interval.charAt(0).toUpperCase() + interval.slice(1)}
-              </button>
-            ))}
+      <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Column 1: Total Recognized and Confidence */}
+        <div className="space-y-6 md:col-span-1">
+          <div className="bg-blue-500 text-white p-4 rounded-lg shadow-md">
+            <h2 className="text-lg font-medium mb-2">Total Vehicle Recognized from Images</h2>
+            <p className="text-4xl font-bold">125</p>
           </div>
 
-          {/* Line Chart */}
-          <Chart
-            options={{
-              chart: { type: "line" },
-              xaxis: { categories: intervalData[selectedInterval].labels },
-              stroke: { curve: "smooth" },
-              colors: ["#1E90FF"],
-            }}
-            series={intervalData[selectedInterval].series}
-            type="line"
-            height={300}
-          />
+          <div className="bg-indigo-700 text-white p-4 rounded-lg shadow-md">
+            <h2 className="text-lg font-medium mb-2">Total Vehicle Recognized from Videos</h2>
+            <p className="text-4xl font-bold">200</p>
+          </div>
+
+          {/* <div className="bg-gray-200 text-black p-4 rounded-lg shadow-md">
+            <h2 className="text-lg font-medium mb-2">Confidence Level</h2>
+            <p className="text-4xl font-bold">{confidenceLevel}</p>
+          </div> */}
         </div>
 
-        {/* Top Regions Graph */}
-        <div className="bg-white shadow-md p-6 rounded-lg">
-          <h2 className="text-xl font-semibold mb-4">Total Vehicle by Region</h2>
-          <Chart
-            options={{
-              chart: { type: "bar" },
-              xaxis: { categories: topRegionsData.labels },
-              colors: ["#4338ca"],
-            }}
-            series={topRegionsData.series}
-            type="bar"
-            height={300}
-          />
+        {/* Column 2: Graphs */}
+        <div className="space-y-6 md:col-span-2">
+          {/* Dynamic Graph */}
+          <div className="bg-white shadow-md p-6 rounded-lg">
+            <h2 className="text-xl font-semibold mb-4">Vehicle Detection</h2>
+
+            {/* Interval Selection */}
+            <div className="flex space-x-2 mb-4">
+              {["daily", "weekly", "monthly"].map((interval) => (
+                <button
+                  key={interval}
+                  className={`px-4 py-2 rounded ${
+                    selectedInterval === interval
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-black"
+                  }`}
+                  onClick={() => setSelectedInterval(interval)}
+                >
+                  {interval.charAt(0).toUpperCase() + interval.slice(1)}
+                </button>
+              ))}
+            </div>
+
+            {/* Line Chart */}
+            <Chart
+              options={{
+                chart: { type: "line" },
+                xaxis: { categories: intervalData[selectedInterval].labels },
+                stroke: { curve: "smooth" },
+                colors: ["#1E90FF"],
+              }}
+              series={intervalData[selectedInterval].series}
+              type="line"
+              height={300}
+            />
+          </div>
+
+          {/* Top Regions Graph */}
+          <div className="bg-white shadow-md p-6 rounded-lg">
+            <h2 className="text-xl font-semibold mb-4">Total Vehicle by Region</h2>
+            <Chart
+              options={{
+                chart: { type: "bar" },
+                xaxis: { categories: topRegionsData.labels },
+                colors: ["#4338ca"],
+              }}
+              series={topRegionsData.series}
+              type="bar"
+              height={300}
+            />
+          </div>
         </div>
       </div>
     </div>

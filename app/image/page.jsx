@@ -59,30 +59,22 @@ export default function ImagesPage() {
 
   const handleCheckPlateNumber = () => {
     alert("Check Plate Number clicked!");
+    //TODO send to server
   };
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="w-full mx-auto p-6">
       <h1 className="text-3xl font-semibold text-indigo-900 mb-6">Upload or Enter Image URL</h1>
 
-      {/* Bagian Upload Drag-and-Drop */}
       <div
         className={`bg-gray-100 p-6 rounded-lg shadow-lg border-2 border-dashed ${
           dragging ? "border-indigo-600" : "border-gray-300"
         }`}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
-        onDragOver={handleDragOver} // Tambahkan handler ini
-        onDrop={handleDrop} // Pastikan preventDefault dipanggil di sini
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
       >
-        <p className="text-center text-lg font-medium text-gray-700">
-          Drag and drop your image here
-        </p>
-
-        <div className="flex justify-center my-4">
-          <FaImage className="text-gray-600 text-8xl" />
-        </div>
-
         <input
           type="file"
           accept="image/*"
@@ -90,11 +82,18 @@ export default function ImagesPage() {
           className="hidden"
           id="file-upload"
         />
-        <label
-          htmlFor="file-upload"
-          className="block text-center text-indigo-600 hover:text-indigo-700 mt-4 cursor-pointer"
-        >
-          Choose a file or drag it here
+        <label htmlFor="file-upload" className="cursor-pointer">
+          <p className="text-center text-lg font-medium text-gray-700">
+            Drag and drop your image here
+          </p>
+
+          <div className="flex justify-center my-4">
+            <FaImage className="text-gray-600 text-8xl" />
+          </div>
+          
+          <p className="block text-center text-indigo-600 hover:text-indigo-700">
+            Choose a file or drag it here
+          </p>
         </label>
       </div>
 
