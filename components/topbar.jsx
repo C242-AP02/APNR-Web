@@ -6,50 +6,20 @@ import { menuItems } from "@/constant/menuitems";
 import { FaTimes, FaBars } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import { UserAuth } from "@/context/authContext";
 
-export default function TopBar({ isSidebarOpen, setIsSidebarOpen }) {
-  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-
+export default function TopBar({ isSidebarOpen, setIsSidebarOpen, className }) {
   const currentPath = usePathname();
   const currentItem = menuItems.find(item => item.url === currentPath);
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const userName = Cookies.get("userName");
-    const userEmail = Cookies.get("userEmail");
-    const userPhotoUrl = Cookies.get("userPhotoUrl");
-
-    if (userName && userEmail) {
-      setUser({
-        name: userName,
-        email: userEmail,
-        photoUrl: userPhotoUrl,
-      });
-    }
-  }, []);
-
-  const handleLogout = async () => {
-    Cookies.remove("userName");
-    Cookies.remove("userEmail");
-    Cookies.remove("userPhotoUrl");
-  
-    setUser(null);
-  
-    router.push("/");
-  
-    await fetch(`${BACKEND_URL}/logout`, {
-      method: "POST",
-      credentials: "include",
-    });
-  };
+  const { user, handleLogout } = UserAuth()
 
   return (
     <div
       className={`
         fixed flex items-center justify-between bg-white py-4 shadow-md w-screen z-10 px-6 
         ${isSidebarOpen ? "sm:pr-72" : "sm:pr-24"}
+        ${className}
       }`}
     >
 
@@ -64,6 +34,7 @@ export default function TopBar({ isSidebarOpen, setIsSidebarOpen }) {
 
       <div className="text-lg font-semibold text-indigo-900">
         {currentItem ? currentItem.title : "Page Not Found"}
+        {/* {JSON.stringify(user.uid)} */}
       </div>
 
       <div 
@@ -78,8 +49,8 @@ export default function TopBar({ isSidebarOpen, setIsSidebarOpen }) {
           className="w-10 h-10 rounded-full object-cover"
         />
         <div className="text-right hidden sm:block">
-          <p className="text-left text-sm font-medium text-gray-900">{user?.name}</p>
-          <p className="text-xs text-gray-500">{user?.email}</p>
+          <p className="text-left text-sm font-medium text-gray-900">{user?.name || ""}</p>
+          <p className="text-xs text-gray-500">{user?.email || ""}</p>
         </div>
 
         {isMenuOpen && (

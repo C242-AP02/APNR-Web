@@ -2,12 +2,17 @@
 
 import { useState } from "react";
 import { FaImage } from "react-icons/fa";
+import { UserAuth } from "@/context/authContext";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { useRouter } from "next/navigation";
 
 export default function ImagesPage() {
-  const [image, setImage] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
   const [isValidImage, setIsValidImage] = useState(true);
   const [dragging, setDragging] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleDragEnter = () => setDragging(true);
   const handleDragLeave = () => setDragging(false);
@@ -18,12 +23,8 @@ export default function ImagesPage() {
 
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result);
-        setIsValidImage(true);
-      };
-      reader.readAsDataURL(file);
+      setImageFile(file);
+      setIsValidImage(true);
     } else {
       setIsValidImage(false);
     }
@@ -32,12 +33,8 @@ export default function ImagesPage() {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result);
-        setIsValidImage(true);
-      };
-      reader.readAsDataURL(file);
+      setImageFile(file);
+      setIsValidImage(true);
     } else {
       setIsValidImage(false);
     }
@@ -50,21 +47,58 @@ export default function ImagesPage() {
   const handleUrlSubmit = () => {
     const regex = /\.(jpeg|jpg|gif|png)$/i;
     if (regex.test(imageUrl)) {
-      setImage(imageUrl);
+      setImageFile(null);
       setIsValidImage(true);
     } else {
       setIsValidImage(false);
     }
   };
 
-  const handleCheckPlateNumber = () => {
-    alert("Check Plate Number clicked!");
-    //TODO send to server
+  const { user } = UserAuth();
+
+  const handleCheckPlateNumber = async () => {
+    if (!imageFile && !imageUrl) {
+      alert("Please upload an image or enter a valid image URL.");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      if (imageFile) {
+        formData.append("image", imageFile);
+      } else {
+        formData.append("imageUrl", imageUrl);
+      }
+      formData.append("uid", user.uid);
+
+      setLoading(true)
+      const response = await fetch("http://localhost:9000/detect", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // alert(`Response from server: ${data.redirect}`);
+        router.push(`list/${data.redirect}`)
+      } else {
+        alert(`Error: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.log("Error during request:", error);
+      alert("An error occurred while checking the plate number.");
+    } finally {
+      setLoading(false)
+    }
   };
 
   return (
     <div className="w-full mx-auto p-6">
-      <h1 className="text-3xl font-semibold text-indigo-900 mb-6">Upload or Enter Image URL</h1>
+      {loading && <LoadingSpinner overlay/>}
+
+      <h1 className="text-3xl font-semibold text-indigo-900 mb-6">
+        Upload or Enter Image URL
+      </h1>
 
       <div
         className={`bg-gray-100 p-6 rounded-lg shadow-lg border-2 border-dashed ${
@@ -90,7 +124,7 @@ export default function ImagesPage() {
           <div className="flex justify-center my-4">
             <FaImage className="text-gray-600 text-8xl" />
           </div>
-          
+
           <p className="block text-center text-indigo-600 hover:text-indigo-700">
             Choose a file or drag it here
           </p>
@@ -99,7 +133,10 @@ export default function ImagesPage() {
 
       {/* Input URL Image */}
       <div className="bg-white p-6 rounded-lg shadow-lg mt-6">
-        <label htmlFor="image-url" className="block text-lg font-medium text-gray-700 mb-2">
+        <label
+          htmlFor="image-url"
+          className="block text-lg font-medium text-gray-700 mb-2"
+        >
           Or Enter Image URL
         </label>
         <div className="flex items-center">
@@ -120,23 +157,34 @@ export default function ImagesPage() {
         </div>
       </div>
 
-      {image && isValidImage ? (
+      {imageFile || imageUrl ? (
         <div className="bg-white p-6 rounded-lg shadow-lg mt-6">
           <div className="flex justify-center">
-            <img
-              src={image}
-              alt="Uploaded"
-              className="max-w-full max-h-96 object-contain rounded-lg shadow-md"
-            />
+            {imageFile ? (
+              <img
+                src={URL.createObjectURL(imageFile)}
+                alt="Uploaded"
+                className="max-w-full max-h-96 object-contain rounded-lg shadow-md"
+              />
+            ) : (
+              <img
+                src={imageUrl}
+                alt="Image URL"
+                className="max-w-full max-h-96 object-contain rounded-lg shadow-md"
+              />
+            )}
           </div>
         </div>
       ) : (
         !isValidImage && (
           <div className="bg-white p-6 rounded-lg shadow-lg mt-6">
-            <p className="text-red-500 font-medium">Invalid image or URL. Please upload a valid image.</p>
+            <p className="text-red-500 font-medium">
+              Invalid image or URL. Please upload a valid image.
+            </p>
           </div>
         )
       )}
+
       <div className="flex justify-center mt-6">
         <button
           onClick={handleCheckPlateNumber}

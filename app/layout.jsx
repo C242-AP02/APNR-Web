@@ -7,6 +7,7 @@ import { useState } from 'react';
 import Sidebar from '@/components/sidebar';
 import TopBar from '@/components/topbar';
 import NextTopLoader from 'nextjs-toploader';
+import { AuthContextProvider } from '@/context/authContext';
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -26,32 +27,28 @@ export default function RootLayout({ children }) {
   const isLandingPage = pathname === "/";
 
   // <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-
-  if (isLandingPage) {
-    return (
-      <html lang="en">
-          <body className='antialiased'>
-          {children}
-        </body>
-      </html>
-    );
-  }
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`antialiased flex w-screen overflow-x-hidden`}>
-        <Sidebar 
-          isSidebarOpen={isSidebarOpen} 
-          setIsSidebarOpen={setIsSidebarOpen} 
-        />
+        <AuthContextProvider>
+          <Sidebar 
+            isSidebarOpen={isSidebarOpen} 
+            setIsSidebarOpen={setIsSidebarOpen}
+            className={`${isLandingPage ? "hidden" : ""}`}
+          />
 
-        <div className={`w-full ${isSidebarOpen ? "sm:ml-64" : "sm:ml-20"}`}>
-          <NextTopLoader />
-          <TopBar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
-          <main className="flex mt-24 w-full">
-            {children}
-          </main>
-        </div>
+          <div className={`w-full ${isLandingPage ? "" : (isSidebarOpen  ? "sm:ml-64" : "sm:ml-20")}`}>
+            <NextTopLoader />
+            <TopBar 
+              isSidebarOpen={isSidebarOpen} 
+              setIsSidebarOpen={setIsSidebarOpen} 
+              className={`${isLandingPage ? "hidden" : ""}`}  
+            />
+            <main className={`${isLandingPage ? "" : "flex mt-24 w-full"}`}>
+              {children}
+            </main>
+          </div>
+        </AuthContextProvider>
       </body>
     </html>
   );

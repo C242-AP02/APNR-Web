@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { menuItems } from "@/constant/menuitems";
 import { FaBars, FaTimes, FaHome, FaImage, FaVideo, FaList } from "react-icons/fa";
 
-export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
+export default function Sidebar({ isSidebarOpen, setIsSidebarOpen, className }) {
   const [active, setActive] = useState("Dashboard");
   const router = useRouter();
 
@@ -25,6 +25,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
       className={`
         ${isSidebarOpen ? "w-full sm:w-64" : "w-0 invisible sm:visible sm:w-20"} 
         fixed top-0 left-0 h-full bg-white shadow-lg p-4 transition-all duration-300 z-50
+        ${className}
       `}
     >
       <div className={`${isSidebarOpen ? "sm:block" : "hidden sm:block"}`}>

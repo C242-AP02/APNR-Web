@@ -3,27 +3,78 @@
 import { useState, useEffect } from "react";
 import { FaCalendar, FaMapMarkerAlt, FaCar } from "react-icons/fa";
 import Image from "next/image";
+import { useParams } from "next/navigation";
+import { UserAuth } from "@/context/authContext";
 
 export default function VehicleDetail() {
-  const vehicle = {
-    plateNumber: "B1234XYZ",
-    region: "Jakarta",
-    date: 1635769200000,
-    vehicleType: "Car",
-    imageUrl: "/dummy-vehicle-detected.jpg",
-  };
+  const [vehicle, setVehicle] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const params = useParams()
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-  const [formattedDate, setFormattedDate] = useState(null);
+  const { user } = UserAuth();
 
   useEffect(() => {
-    const date = new Date(vehicle.date);
-    setFormattedDate(date.toLocaleString());
-  }, [vehicle.date]);
+    const fetchVehicle = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/get-vehicle-details/${params.id}`,{
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          // body: JSON.stringify({ uid: user.uid }), 
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch vehicle details");
+        }
+        const data = await response.json();
+        setVehicle(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVehicle();
+  }, []);
+
+  const renderStatusBox = (message, color = "text-gray-500") => (
+    <div className="bg-gradient-to-r from-gray-100 via-white to-gray-100 p-4 rounded-lg shadow-md text-center">
+      <h2 className={`text-lg font-semibold ${color} mb-4`}>{message}</h2>
+    </div>
+  );
+
+  if (loading) {
+    return (
+      <div className="w-full p-6 flex justify-center">
+        {renderStatusBox("Loading vehicle data...")}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full p-6 flex justify-center">
+        {renderStatusBox(`Error: ${error}`, "text-red-500")}
+      </div>
+    );
+  }
+
+  if (!vehicle) {
+    return (
+      <div className="w-full p-6 flex justify-center">
+        {renderStatusBox("No vehicle data available.", "text-gray-400")}
+      </div>
+    );
+  }
+  
+  const formattedDate = new Date(vehicle.timestamp).toLocaleString();
 
   return (
     <div className="w-full p-6 flex justify-center">
       <div className="bg-white p-8 rounded-lg shadow-xl max-w-6xl w-full">
-
         <h1 className="text-3xl font-bold text-indigo-900 mb-8 text-center">
           Vehicle Details
         </h1>
@@ -68,9 +119,7 @@ export default function VehicleDetail() {
                   <FaCalendar className="text-green-500 text-lg" />
                   <div>
                     <p className="text-gray-500 text-sm">Date and Time</p>
-                    <p className="font-bold text-base">
-                      {formattedDate || "Loading..."}
-                    </p>
+                    <p className="font-bold text-base">{formattedDate}</p>
                   </div>
                 </div>
               </div>
