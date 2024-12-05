@@ -4,64 +4,78 @@ import { FaArrowRight } from "react-icons/fa";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import LoginButton from "@/components/login_button";
+import { UserAuth } from "@/context/authContext";
 
 export default function LandingPage() {
   const router = useRouter();
 
+  const { user, handleLogin } = UserAuth();
+
   const handleClick = () => {
-    window.location.href = "/dashboard";
+    if(user){
+      router.push("/dashboard");
+    } else{
+      handleLogin()
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-blue-900 text-white p-4 fixed top-0 w-full z-20">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="text-2xl font-semibold">APNR</div>
-          <nav>
-            <ul className="flex space-x-6">
-              <li>
-                <Link href="#features" className="hover:text-gray-300">
-                  Features
-                </Link>
-              </li>
-              <li>
-                <Link href="#how-it-works" className="hover:text-gray-300">
-                  How it Works
-                </Link>
-              </li>
-              <li>
-                <Link href="#contact" className="hover:text-gray-300">
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </nav>
+
+    {/* Header */}
+    <header className="bg-blue-900 text-white p-2 sm:p-2 fixed top-0 w-full z-20">
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <div className="text-lg sm:text-2xl font-semibold">APNR</div>
+        <nav>
+          <ul className="flex space-x-4 sm:space-x-6 text-sm sm:text-base">
+            <li>
+              <Link href="#features" className="hover:text-gray-300">
+                Features
+              </Link>
+            </li>
+            <li>
+              <Link href="#how-it-works" className="hover:text-gray-300">
+                How it Works
+              </Link>
+            </li>
+            <li>
+              <Link href="#contact" className="hover:text-gray-300">
+                Contact
+              </Link>
+            </li>
+          </ul>
+        </nav>
+        <div className="text-sm sm:text-base">
           <LoginButton />
         </div>
-      </header>
+      </div>
+    </header>
 
       {/* Hero Section */}
       <section
-        className="relative text-white py-16 bg-cover bg-center h-[60vh] flex mt-16"
+        className="relative text-white py-16 bg-cover bg-center h-[60vh] flex sm:mt-16"
         style={{ backgroundImage: "url('/background-landing.png')" }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-        <div className="absolute left-8 top-1/2 transform -translate-y-1/2 max-w-4xl mx-auto flex flex-col items-start px-4">
+        <div className="absolute left-0 sm:left-8 top-1/2 transform -translate-y-1/2 max-w-4xl mx-auto flex flex-col items-start px-4">
           <h1 className="text-4xl font-bold mb-4">Welcome to APNR</h1>
-          <p className="text-xl mb-8">
+          <p className="text-md sm:text-xl mb-8">
             The future of Automatic Plate Number Recognition for enhanced
             security <br />
             and vehicle tracking.
           </p>
           <div>
-            <Link
-              href="/dashboard"
+            <button
+              onClick={handleClick}
               className="bg-yellow-500 text-black py-3 px-6 rounded-lg inline-flex items-center space-x-2 hover:bg-yellow-600"
             >
-              <span>Get Started</span>
+              {user ? (
+                <span>Go To Dashboard</span>
+              ) : (
+                <span>Get Started</span>
+              )}
               <FaArrowRight />
-            </Link>
+            </button>
           </div>
         </div>
       </section>

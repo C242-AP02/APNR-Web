@@ -15,20 +15,20 @@ export default function LoginButton() {
           onClick={handleLogin}
           className={`px-6 py-3 rounded-lg text-white transition bg-blue-600 hover:bg-blue-700`}
         >
-          Login with Google
+          Login
         </button>
       ) : (
         <div className="relative">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="flex items-center space-x-2 text-white bg-blue-600 p-3 rounded-full"
+            className="flex items-center space-x-2 text-white bg-blue-600 rounded-full"
           >
             <img
               src={user?.photoUrl || "/profile.jpg"}
               alt={user?.name}
-              className="w-8 h-8 rounded-full"
+              className="w-8 h-8 sm:w-12 sm:h-12 rounded-full"
             />
-            <span>{user?.name}</span>
+            {/* <span>{user?.name}</span> */}
           </button>
 
           {isMenuOpen && (

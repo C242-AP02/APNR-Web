@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import React, { useContext, createContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { onAuthStateChanged, signInWithPopup } from "firebase/auth";
+import { BACKEND_URL } from "@/constant/configuration";
 
 const AuthContext = createContext(null);
 
 export const AuthContextProvider = ({ children }) => {
-    const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
     const router = useRouter()
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false)
@@ -28,19 +28,12 @@ export const AuthContextProvider = ({ children }) => {
         });
   
         if (response.ok) {
-          const data = await response.json();
-          console.log("Login successful:", data);
-  
-          Cookies.set("userName", data.user.name, { secure: true, sameSite: "lax" });
-          Cookies.set("userEmail", data.user.email, { secure: true, sameSite: "lax" });
-          Cookies.set("userPhotoUrl", result.user.photoURL, { secure: true, sameSite: "lax" });
-          Cookies.set("token", result.user.idToken, { secure: true, sameSite: "lax" });
-          Cookies.set("uid", result.user.uid, { secure: true, sameSite: "lax" });
+          await response.json();
   
           setUser({
-            name: data.user.name,
-            email: data.user.email,
-            photoUrl: result.user.photoURL,
+            name: Cookies.get("name"),
+            email: Cookies.get("email"),
+            photoUrl: Cookies.get("picture"),
           });
   
         } else {
@@ -56,13 +49,7 @@ export const AuthContextProvider = ({ children }) => {
       }
     };
   
-    const handleLogout = async () => {
-      Cookies.remove("userName");
-      Cookies.remove("userEmail");
-      Cookies.remove("userPhotoUrl");
-      Cookies.remove("token");
-      Cookies.remove("uid")
-    
+    const handleLogout = async () => {    
       setUser(null);
     
       router.push("/");
@@ -74,47 +61,42 @@ export const AuthContextProvider = ({ children }) => {
     };
     
     useEffect(() => {
-    const userName = Cookies.get("userName");
-    const userEmail = Cookies.get("userEmail");
-    const userPhotoUrl = Cookies.get("userPhotoUrl");
-    const token = Cookies.get("token");
-    const uid = Cookies.get("uid");
+    const name = Cookies.get("name");
+    const email = Cookies.get("email");
+    const picture = Cookies.get("picture");
 
-    if (userName && userEmail) {
+    if (!!name && !!email) {
       setUser({
-        name: userName,
-        email: userEmail,
-        photoUrl: userPhotoUrl,
-        token: token,
-        uid: uid
+        name: name,
+        email: email,
+        photoUrl: picture,
       });
       }
     }, []);
 
-    useEffect(() => {
-      const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
-        if (authUser) {
-          const token = Cookies.get("token");
-          const name = Cookies.get("userName");
-          const email = Cookies.get("userEmail");
-          const photoUrl = Cookies.get("userPhotoUrl");
-          const uid = Cookies.get("uid");
+    // useEffect(() => {
+    //   const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+    //     if (authUser) {
+    //       const token = Cookies.get("token");
+    //       const name = Cookies.get("userName");
+    //       const email = Cookies.get("userEmail");
+    //       const photoUrl = Cookies.get("userPhotoUrl");
+    //       const uid = Cookies.get("uid");
 
+    //       setUser({
+    //         idToken: token || await authUser.getIdToken(),
+    //         name: name || authUser.displayName,
+    //         email: email || authUser.email,
+    //         photoUrl: photoUrl || authUser.photoURL,
+    //         uid: uid || authUser.uid,
+    //       });
+    //     } else {
+    //       setUser(null);
+    //     }
+    //   });
   
-          setUser({
-            idToken: token || await authUser.getIdToken(),
-            name: name || authUser.displayName,
-            email: email || authUser.email,
-            photoUrl: photoUrl || authUser.photoURL,
-            uid: uid || authUser.uid,
-          });
-        } else {
-          setUser(null);
-        }
-      });
-  
-      return () => unsubscribe();
-    }, []);
+    //   return () => unsubscribe();
+    // }, []);
 
     return (
       <AuthContext.Provider value={{ user, handleLogin, handleLogout }}>

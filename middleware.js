@@ -9,6 +9,7 @@ export async function middleware(request) {
   }
 
   const token = request.cookies.get('token');
+  // console.log(token)
   
   if (!token && url.pathname !== "/") {
     return NextResponse.redirect(new URL("/", request.url));

@@ -5,6 +5,7 @@ import { FaImage } from "react-icons/fa";
 import { UserAuth } from "@/context/authContext";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useRouter } from "next/navigation";
+import { BACKEND_URL } from "@/constant/configuration";
 
 export default function ImagesPage() {
   const [imageFile, setImageFile] = useState(null);
@@ -69,17 +70,16 @@ export default function ImagesPage() {
       } else {
         formData.append("imageUrl", imageUrl);
       }
-      formData.append("uid", user.uid);
 
       setLoading(true)
-      const response = await fetch("http://localhost:9000/detect", {
+      const response = await fetch(`${BACKEND_URL}/detect`, {
         method: "POST",
         body: formData,
+        credentials: "include"
       });
 
       if (response.ok) {
         const data = await response.json();
-        // alert(`Response from server: ${data.redirect}`);
         router.push(`list/${data.redirect}`)
       } else {
         alert(`Error: ${response.statusText}`);

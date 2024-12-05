@@ -5,29 +5,34 @@ import { FaCalendar, FaMapMarkerAlt, FaCar } from "react-icons/fa";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { UserAuth } from "@/context/authContext";
+import { BACKEND_URL } from "@/constant/configuration";
 
 export default function VehicleDetail() {
   const [vehicle, setVehicle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const params = useParams()
-  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-
-  const { user } = UserAuth();
 
   useEffect(() => {
     const fetchVehicle = async () => {
       try {
-        const response = await fetch(`${BACKEND_URL}/get-vehicle-details/${params.id}`,{
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          // body: JSON.stringify({ uid: user.uid }), 
+        const response = await fetch(`${BACKEND_URL}/get-vehicle-details/${params.id}`, {
+          method: "GET",
+          credentials: "include"
         });
-        if (!response.ok) {
-          throw new Error("Failed to fetch vehicle details");
+  
+        if (response.status === 401) {
+          throw new Error("You are not authenticated. Please log in.");
         }
+  
+        if (response.status === 403) {
+          throw new Error("You do not have permission to view this vehicle detail.");
+        }
+  
+        if (!response.ok) {
+          throw new Error("Failed to fetch vehicle details.");
+        }
+  
         const data = await response.json();
         setVehicle(data);
       } catch (err) {
@@ -36,9 +41,9 @@ export default function VehicleDetail() {
         setLoading(false);
       }
     };
-
+  
     fetchVehicle();
-  }, []);
+  }, [params.id]);
 
   const renderStatusBox = (message, color = "text-gray-500") => (
     <div className="bg-gradient-to-r from-gray-100 via-white to-gray-100 p-4 rounded-lg shadow-md text-center">

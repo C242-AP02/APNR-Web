@@ -8,6 +8,7 @@ import Sidebar from '@/components/sidebar';
 import TopBar from '@/components/topbar';
 import NextTopLoader from 'nextjs-toploader';
 import { AuthContextProvider } from '@/context/authContext';
+import { Suspense } from "react";
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -45,7 +46,7 @@ export default function RootLayout({ children }) {
               className={`${isLandingPage ? "hidden" : ""}`}  
             />
             <main className={`${isLandingPage ? "" : "flex mt-24 w-full"}`}>
-              {children}
+              <Suspense>{children}</Suspense>
             </main>
           </div>
         </AuthContextProvider>

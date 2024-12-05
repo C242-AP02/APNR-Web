@@ -4,12 +4,12 @@ import { useTable } from "react-table";
 import { FaEye } from "react-icons/fa";
 import { useRouter, useSearchParams } from "next/navigation";
 import { UserAuth } from "@/context/authContext";
+import { BACKEND_URL } from "@/constant/configuration";
 
 export default function VehicleList() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = UserAuth()
-  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   // State Filters
   const [filters, setFilters] = useState({
@@ -49,11 +49,8 @@ export default function VehicleList() {
 
       try {
         const response = await fetch(`${BACKEND_URL}/get-list`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ uid: user.uid }), 
+          method: "GET",
+          credentials: "include"
         });
 
         if (!response.ok) {
