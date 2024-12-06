@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
 export async function middleware(request) {
 
@@ -8,8 +8,7 @@ export async function middleware(request) {
     return NextResponse.next();
   }
 
-  const token = request.cookies.get('token');
-  // console.log(token)
+  const token = request.cookies.get("token");
   
   if (!token && url.pathname !== "/") {
     return NextResponse.redirect(new URL("/", request.url));
@@ -20,4 +19,4 @@ export async function middleware(request) {
 
 export const config = {
   matcher: ['/((?!.*\/).*)'],
-};
+}; 

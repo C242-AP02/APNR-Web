@@ -6,6 +6,7 @@ import React, { useContext, createContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { onAuthStateChanged, signInWithPopup } from "firebase/auth";
 import { BACKEND_URL } from "@/constant/configuration";
+import { getCookie } from "@/utils/util";
 
 const AuthContext = createContext(null);
 
@@ -28,13 +29,18 @@ export const AuthContextProvider = ({ children }) => {
         });
   
         if (response.ok) {
-          await response.json();
-  
+          const data = await response.json();
+
+          Cookies.set("name", data.user.name);
+          Cookies.set("email", data.user.email);
+          Cookies.set("picture", data.user.picture);
+          Cookies.set("token", idToken);
+
           setUser({
-            name: Cookies.get("name"),
-            email: Cookies.get("email"),
-            photoUrl: Cookies.get("picture"),
-          });
+            name: data.user.name,
+            email: data.user.email,
+            photoUrl: data.user.picture
+          })
   
         } else {
           const errorData = await response.json();
@@ -49,7 +55,14 @@ export const AuthContextProvider = ({ children }) => {
       }
     };
   
-    const handleLogout = async () => {    
+    const handleLogout = async () => {
+      await auth.signOut();
+
+      Cookies.remove("name");
+      Cookies.remove("email");
+      Cookies.remove("picture");
+      Cookies.remove("token")
+
       setUser(null);
     
       router.push("/");
@@ -60,43 +73,51 @@ export const AuthContextProvider = ({ children }) => {
       });
     };
     
-    useEffect(() => {
-    const name = Cookies.get("name");
-    const email = Cookies.get("email");
-    const picture = Cookies.get("picture");
-
-    if (!!name && !!email) {
-      setUser({
-        name: name,
-        email: email,
-        photoUrl: picture,
-      });
-      }
-    }, []);
-
     // useEffect(() => {
-    //   const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
-    //     if (authUser) {
-    //       const token = Cookies.get("token");
-    //       const name = Cookies.get("userName");
-    //       const email = Cookies.get("userEmail");
-    //       const photoUrl = Cookies.get("userPhotoUrl");
-    //       const uid = Cookies.get("uid");
-
-    //       setUser({
-    //         idToken: token || await authUser.getIdToken(),
-    //         name: name || authUser.displayName,
-    //         email: email || authUser.email,
-    //         photoUrl: photoUrl || authUser.photoURL,
-    //         uid: uid || authUser.uid,
-    //       });
-    //     } else {
-    //       setUser(null);
-    //     }
+    // const name = Cookies.get("name");
+    // const email = Cookies.get("email");
+    // const picture = Cookies.get("picture");
+    // 
+    // if (!!name && !!email) {
+    //   setUser({
+    //     name: name,
+    //     email: email,
+    //     photoUrl: picture,
     //   });
-  
-    //   return () => unsubscribe();
+    //   }
     // }, []);
+
+    useEffect(() => {
+      const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+        if (authUser) {
+          setLoading(true);
+          const idToken = authUser.getIdToken();
+
+          await fetch(`${BACKEND_URL}/auth/google`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idToken }),
+            credentials: "include",
+          });
+
+          Cookies.set("name", authUser.displayName);
+          Cookies.set("email", authUser.email);
+          Cookies.set("picture", authUser.photoURL);
+          Cookies.set("token", idToken);
+
+          setUser({
+            name: authUser.displayName,
+            email: authUser.email,
+            photoUrl: authUser.photoURL,
+          });
+          setLoading(false);
+        } else {
+          setUser(null);
+        }
+      });
+  
+      return () => unsubscribe();
+    }, []);
 
     return (
       <AuthContext.Provider value={{ user, handleLogin, handleLogout }}>

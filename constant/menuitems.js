@@ -6,4 +6,6 @@ export const menuItems = [
   // { name: "Video", icon: <FaVideo />, url: "/video", title: "Upload Video" },
   // { name: "Camera", icon: <FaCamera />, url: "/camera", title: "Real Time Camera" },
   { name: "List", icon: <FaList size={24} />, url: "/list", title: "Vehicle List" },
+  { name: "", url: "/list/:id", title: "Vehicle Details" },
+
 ];

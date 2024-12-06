@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
 import { useTable } from "react-table";
-import { FaEye } from "react-icons/fa";
+import { FaEye, FaFilter } from "react-icons/fa";
 import { useRouter, useSearchParams } from "next/navigation";
 import { UserAuth } from "@/context/authContext";
 import { BACKEND_URL } from "@/constant/configuration";
@@ -120,7 +120,7 @@ export default function VehicleList() {
   const updateFilters = (key, value) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
-    setCurrentPage(1); // Reset ke halaman pertama
+    setCurrentPage(1);
     updateURL(newFilters, 1);
   };
 
@@ -210,12 +210,26 @@ export default function VehicleList() {
     return pagination;
   };
 
-  return (
-    <div className="w-full p-6 flex flex-col items-center">
-      <h1 className="text-3xl font-bold text-indigo-800 mb-6">Vehicle List</h1>
+  const [isFilterShow, setIsFilterShow] = useState(false);
 
+  const isFilterSet = !!filters.region || !!filters.startDate || !!filters.endDate;
+
+  return (
+    <div className="relative w-full p-6 flex flex-col items-center">
+      <h1 className="text-3xl font-bold text-indigo-800">Vehicle List</h1>
+
+      <div className="w-full my-2">
+        <button 
+          className={`sm:hidden text-white p-4 flex justify-center items-center gap-2 bg-indigo-700 rounded-lg`}
+          onClick={() => {
+            setIsFilterShow(!isFilterShow);
+          }}
+        >
+          <FaFilter color="white"/> Filter
+        </button>
+      </div>
       {/* Filter Section */}
-      <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 mb-6">
+      <div className={`absolute shadow-xl py-10 rounded-lg bg-gray-50 px-20 top-36 ${isFilterShow ? "flex" : "hidden"} sm:p-0 sm:shadow-none sm:top-0 sm:bg-white sm:relative sm:flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 mb-6`}>
         <input
           type="text"
           placeholder="Filter by Region"
@@ -237,7 +251,7 @@ export default function VehicleList() {
         />
         <button
           onClick={resetFilters}
-          className="px-4 py-2 bg-red-500 text-white rounded"
+          className={`${isFilterSet ? "block" : "hidden"} px-4 py-2 bg-red-500 text-white rounded`}
         >
           Reset Filters
         </button>

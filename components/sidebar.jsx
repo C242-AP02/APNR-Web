@@ -53,23 +53,26 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen, className }) 
         </div>
 
         <ul className="space-y-4">
-          {menuItems.map((item) => (
-            <li
-              key={item.name}
-              onClick={() => handleClick(item)}
-              className={`flex sm:justify-start justify-center items-center space-x-4 p-3 rounded-lg cursor-pointer
-                ${
-                  active === item.name
-                    ? "bg-blue-500 text-white"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
-            >
-              <span className="text-lg font-medium">{item.icon}</span>
-              <div>
-                {isSidebarOpen && <span className="font-medium">{item.name}</span>}
-              </div>
-            </li>
-          ))}
+          {menuItems
+            .filter((item) => item.name.trim() !== "")
+            .map((item) => (
+              <li
+                key={item.name}
+                onClick={() => handleClick(item)}
+                className={`flex sm:justify-start justify-center items-center space-x-4 p-3 rounded-lg cursor-pointer
+                  ${
+                    active === item.name
+                      ? "bg-blue-500 text-white"
+                      : "text-gray-600 hover:bg-gray-100"
+                  }`}
+              >
+                <span className="text-lg font-medium">{item.icon}</span>
+                <div>
+                  {isSidebarOpen && <span className="font-medium">{item.name}</span>}
+                </div>
+              </li>
+            ))
+          }
         </ul>
       </div>
     </div>

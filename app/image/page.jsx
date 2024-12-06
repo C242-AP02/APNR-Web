@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FaImage } from "react-icons/fa";
+import { FaImage, FaTimes } from "react-icons/fa";
 import { UserAuth } from "@/context/authContext";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useRouter } from "next/navigation";
@@ -55,8 +55,6 @@ export default function ImagesPage() {
     }
   };
 
-  const { user } = UserAuth();
-
   const handleCheckPlateNumber = async () => {
     if (!imageFile && !imageUrl) {
       alert("Please upload an image or enter a valid image URL.");
@@ -96,69 +94,79 @@ export default function ImagesPage() {
     <div className="w-full mx-auto p-6">
       {loading && <LoadingSpinner overlay/>}
 
-      <h1 className="text-3xl font-semibold text-indigo-900 mb-6">
+      <h1 className="text-3xl text-center font-semibold text-indigo-900 mb-6">
         Upload or Enter Image URL
       </h1>
 
-      <div
-        className={`bg-gray-100 p-6 rounded-lg shadow-lg border-2 border-dashed ${
-          dragging ? "border-indigo-600" : "border-gray-300"
-        }`}
-        onDragEnter={handleDragEnter}
-        onDragLeave={handleDragLeave}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-      >
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          className="hidden"
-          id="file-upload"
-        />
-        <label htmlFor="file-upload" className="cursor-pointer">
-          <p className="text-center text-lg font-medium text-gray-700">
-            Drag and drop your image here
-          </p>
-
-          <div className="flex justify-center my-4">
-            <FaImage className="text-gray-600 text-8xl" />
-          </div>
-
-          <p className="block text-center text-indigo-600 hover:text-indigo-700">
-            Choose a file or drag it here
-          </p>
-        </label>
-      </div>
-
-      {/* Input URL Image */}
-      <div className="bg-white p-6 rounded-lg shadow-lg mt-6">
-        <label
-          htmlFor="image-url"
-          className="block text-lg font-medium text-gray-700 mb-2"
+      <div className={`${imageFile ? "hidden" : "block"} relative flex flex-col justify-center items-center w-full`}>
+        <div
+          className={`w-full max-w-5xl bg-gray-100 p-6 rounded-lg shadow-lg border-2 border-dashed ${
+            dragging ? "border-indigo-600" : "border-gray-300"
+          }`}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
         >
-          Or Enter Image URL
-        </label>
-        <div className="flex items-center">
           <input
-            type="text"
-            id="image-url"
-            value={imageUrl}
-            onChange={handleUrlChange}
-            className="p-3 border border-gray-300 rounded-l-lg w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="Enter image URL"
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="hidden"
+            id="file-upload"
           />
-          <button
-            onClick={handleUrlSubmit}
-            className="bg-indigo-600 text-white px-6 py-3 rounded-r-lg hover:bg-indigo-700 transition duration-200"
+          <label htmlFor="file-upload" className="cursor-pointer">
+            <p className="text-center text-lg font-medium text-gray-700">
+              Drag and drop your image here
+            </p>
+
+            <div className="flex justify-center my-4">
+              <FaImage className="text-gray-600 text-8xl" />
+            </div>
+
+            <p className="block text-center text-indigo-600 hover:text-indigo-700">
+              Choose a file or drag it here
+            </p>
+          </label>
+        </div>
+        {/* Input URL Image */}
+        <div className="bg-white p-6 rounded-lg shadow-lg mt-6 max-w-5xl w-full">
+          <label
+            htmlFor="image-url"
+            className="block text-lg font-medium text-gray-700 mb-2"
           >
-            Submit
-          </button>
+            Or Enter Image URL
+          </label>
+          <div className="flex items-center">
+            <input
+              type="text"
+              id="image-url"
+              value={imageUrl}
+              onChange={handleUrlChange}
+              className="p-3 border border-gray-300 rounded-l-lg w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="Enter image URL"
+            />
+            <button
+              onClick={handleUrlSubmit}
+              className="bg-indigo-600 text-white px-6 py-3 rounded-r-lg hover:bg-indigo-700 transition duration-200"
+            >
+              Submit
+            </button>
+          </div>
         </div>
       </div>
 
       {imageFile || imageUrl ? (
-        <div className="bg-white p-6 rounded-lg shadow-lg mt-6">
+        <div className="bg-white p-6 rounded-lg shadow-lg mt-6 relative">
+          <div className="absolute right-8 flex justify-end">
+            <button 
+              onClick={() => {
+                setImageFile(null);
+              }}
+            >
+              <FaTimes size={24}/>
+            </button>
+          </div>
           <div className="flex justify-center">
             {imageFile ? (
               <img

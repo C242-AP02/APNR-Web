@@ -4,15 +4,20 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { menuItems } from "@/constant/menuitems";
 import { FaTimes, FaBars } from "react-icons/fa";
-import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
+import { useState } from "react";
 import { UserAuth } from "@/context/authContext";
 
 export default function TopBar({ isSidebarOpen, setIsSidebarOpen, className }) {
   const currentPath = usePathname();
-  const currentItem = menuItems.find(item => item.url === currentPath);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, handleLogout } = UserAuth()
+
+  const activeMenuItem = menuItems.find((item) => {
+    if (item.name.trim() === "") {
+      return currentPath.startsWith(item.url.split("/:")[0]);
+    }
+    return item.url === currentPath;
+  });
 
   return (
     <div
@@ -33,8 +38,7 @@ export default function TopBar({ isSidebarOpen, setIsSidebarOpen, className }) {
       </div>
 
       <div className="text-lg font-semibold text-indigo-900">
-        {currentItem ? currentItem.title : "Page Not Found"}
-        {/* {JSON.stringify(user.uid)} */}
+        {activeMenuItem ? activeMenuItem.title : "Page Not Found"}
       </div>
 
       <div 
@@ -54,7 +58,7 @@ export default function TopBar({ isSidebarOpen, setIsSidebarOpen, className }) {
         </div>
 
         {isMenuOpen && (
-        <div className="absolute right- top-12 mt-2 bg-white shadow-lg rounded-md p-2 w-40">
+        <div className="absolute right-0 top-12 mt-2 bg-white shadow-lg rounded-md p-2 w-40">
           <button
             onClick={handleLogout}
             className="block text-gray-700 hover:bg-gray-200 px-4 py-2 text-left w-full"

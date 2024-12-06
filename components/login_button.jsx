@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Cookies from "js-cookie";
 import { UserAuth } from "@/context/authContext";
 
 export default function LoginButton() {
