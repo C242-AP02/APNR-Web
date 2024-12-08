@@ -10,13 +10,14 @@ import Link from "next/link";
 export default function VehicleList() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user } = UserAuth()
+  const { user } = UserAuth();
 
   // State Filters
   const [filters, setFilters] = useState({
     region: searchParams.get("region") || "",
     startDate: searchParams.get("startDate") || "",
     endDate: searchParams.get("endDate") || "",
+    items: searchParams.get("items") ? decodeURIComponent(searchParams.get("items")).split(",") : []
   });
 
   // State Halaman
@@ -82,7 +83,10 @@ export default function VehicleList() {
       const matchEndDate = filters.endDate
         ? item.date <= new Date(filters.endDate).getTime()
         : true;
-      return matchRegion && matchStartDate && matchEndDate;
+      const matchItems = filters.items.length > 0
+        ? filters.items.includes(item.id)
+        : true;
+      return matchRegion && matchStartDate && matchEndDate && matchItems;
     });
 
     // Pagination
@@ -230,33 +234,35 @@ export default function VehicleList() {
         </button>
       </div>
       {/* Filter Section */}
-      <div className={`absolute shadow-xl py-10 rounded-lg bg-gray-50 px-20 top-36 ${isFilterShow ? "flex" : "hidden"} sm:p-0 sm:shadow-none sm:top-0 sm:bg-white sm:relative sm:flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 mb-6`}>
-        <input
-          type="text"
-          placeholder="Filter by Region"
-          value={filters.region}
-          onChange={(e) => updateFilters("region", e.target.value)}
-          className="px-4 py-2 border rounded"
-        />
-        <input
-          type="date"
-          value={filters.startDate}
-          onChange={(e) => updateFilters("startDate", e.target.value)}
-          className="px-4 py-2 border rounded"
-        />
-        <input
-          type="date"
-          value={filters.endDate}
-          onChange={(e) => updateFilters("endDate", e.target.value)}
-          className="px-4 py-2 border rounded"
-        />
-        <button
-          onClick={resetFilters}
-          className={`${isFilterSet ? "block" : "hidden"} px-4 py-2 bg-red-500 text-white rounded`}
-        >
-          Reset Filters
-        </button>
-      </div>
+      {!filters.items.length &&(
+        <div className={`absolute shadow-xl py-10 rounded-lg bg-gray-50 px-20 top-36 ${isFilterShow ? "flex" : "hidden"} sm:p-0 sm:shadow-none sm:top-0 sm:bg-white sm:relative sm:flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 mb-6`}>
+          <input
+            type="text"
+            placeholder="Filter by Region"
+            value={filters.region}
+            onChange={(e) => updateFilters("region", e.target.value)}
+            className="px-4 py-2 border rounded"
+          />
+          <input
+            type="date"
+            value={filters.startDate}
+            onChange={(e) => updateFilters("startDate", e.target.value)}
+            className="px-4 py-2 border rounded"
+          />
+          <input
+            type="date"
+            value={filters.endDate}
+            onChange={(e) => updateFilters("endDate", e.target.value)}
+            className="px-4 py-2 border rounded"
+          />
+          <button
+            onClick={resetFilters}
+            className={`${isFilterSet ? "block" : "hidden"} px-4 py-2 bg-red-500 text-white rounded`}
+          >
+            Reset Filters
+          </button>
+        </div>
+      )}
 
       {/* Table */}
       {loading ? (
@@ -264,7 +270,6 @@ export default function VehicleList() {
           <div className="animate-spin rounded-full border-t-4 border-blue-500 h-12 w-12"></div>
         </div>
       ) : (
-        // Table
         <div className="overflow-auto bg-white shadow-lg rounded-lg w-full max-w-5xl">
           <table
             {...getTableProps()}
@@ -316,22 +321,24 @@ export default function VehicleList() {
       )}
 
       {/* Pagination */}
-      <div className="flex space-x-2 mt-4">
-        {getPagination().map((item, index) => (
-          <button
-            key={index}
-            onClick={() => item.page && handlePageChange(item.page)}
-            className={`px-3 py-1 border rounded ${
-              item.page === currentPage
-                ? "bg-blue-500 text-white"
-                : "bg-white text-gray-800 hover:bg-gray-100"
-            }`}
-            disabled={!item.page}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
+      {!filters.items.length && (
+        <div className="flex space-x-2 mt-4">
+          {getPagination().map((item, index) => (
+            <button
+              key={index}
+              onClick={() => item.page && handlePageChange(item.page)}
+              className={`px-3 py-1 border rounded ${
+                item.page === currentPage
+                  ? "bg-blue-500 text-white"
+                  : "bg-white text-gray-800 hover:bg-gray-100"
+              }`}
+              disabled={!item.page}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

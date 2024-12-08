@@ -168,30 +168,32 @@ export default function ImagesPage() {
       )}
 
       {(imageFile || imageUrl) && (
-        <div className="bg-white p-6 rounded-lg shadow-lg mt-6 relative">
-          <div className="absolute right-8 flex justify-end">
-            <button 
-              onClick={() => {
-                setImageFile(null);
-              }}
-            >
-              <FaTimes size={24}/>
-            </button>
-          </div>
-          <div className="flex justify-center">
-            {imageFile ? (
-              <img
-                src={URL.createObjectURL(imageFile)}
-                alt="Uploaded"
-                className="max-w-full max-h-96 object-contain rounded-lg shadow-md"
-              />
-            ) : (
-              <img
-                src={imageUrl}
-                alt="Image URL"
-                className="max-w-full max-h-96 object-contain rounded-lg shadow-md"
-              />
-            )}
+        <div className="w-full flex justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg mt-6 relative max-w-5xl w-full">
+            <div className="absolute right-8 flex justify-end">
+              <button 
+                onClick={() => {
+                  setImageFile(null);
+                }}
+              >
+                <FaTimes size={24}/>
+              </button>
+            </div>
+            <div className="flex justify-center">
+              {imageFile ? (
+                <img
+                  src={URL.createObjectURL(imageFile)}
+                  alt="Uploaded"
+                  className="max-w-full max-h-96 object-contain rounded-lg shadow-md"
+                />
+              ) : (
+                <img
+                  src={imageUrl}
+                  alt="Image URL"
+                  className="max-w-full max-h-96 object-contain rounded-lg shadow-md"
+                />
+              )}
+            </div>
           </div>
         </div>
       )}
