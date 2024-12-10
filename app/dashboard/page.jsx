@@ -130,7 +130,7 @@ export default function Dashboard() {
         </div>
 
         <div className="space-y-6 md:col-span-2">
-          <div className="bg-white border p-6 rounded-lg">
+          <div className="bg-white border py-6 px-2 sm:px-6 rounded-lg">
             <h2 className="text-xl font-semibold mb-4">Total by Interval</h2>
 
             <div className="flex space-x-2 mb-4">
@@ -148,16 +148,9 @@ export default function Dashboard() {
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={selectedInterval === "monthly" ? totalVehicleMonthly : totalVehicleDaily}>
                 <CartesianGrid horizontal stroke="#ccc" strokeWidth={1} vertical={false} />
-                <XAxis dataKey="name" tick={{ fontSize: 14, fontWeight: 'bold', fill: '#555' }} />
-                <YAxis tick={{ fontSize: 14, fontWeight: 'bold', fill: '#555' }} />
+                <XAxis dataKey="name" tick={{ fontSize: 14, fontWeight: 'bold', fill: '#555' }} tickFormatter={(value, index) => `${value.substring(0, 3)}`}/>
+                <YAxis allowDecimals={false} width={30} tick={{ fontSize: 14, fontWeight: 'bold', fill: '#555' }} />
                 <Tooltip />
-                <Legend
-                  wrapperStyle={{
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#333', 
-                  }}
-                />
                 <Line type="monotone" dataKey="VehicleCount" stroke="#1E90FF" strokeWidth={4} />
               </LineChart>
             </ResponsiveContainer>
@@ -168,16 +161,9 @@ export default function Dashboard() {
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={totalVehicleByRegion}>
                 <CartesianGrid horizontal stroke="#ccc" strokeWidth={1} vertical={false} />
-                <XAxis dataKey="region" tick={{ fontSize: 14, fontWeight: 'bold', fill: '#555' }} />
-                <YAxis tick={{ fontSize: 14, fontWeight: 'bold', fill: '#555' }} />
+                <XAxis dataKey="region" tick={{ fontSize: 14, fontWeight: 'bold', fill: '#555' }} tickFormatter={(_, index) => `R${index + 1}`}/>
+                <YAxis allowDecimals={false} width={30} tick={{ fontSize: 14, fontWeight: 'bold', fill: '#555' }} />
                 <Tooltip />
-                <Legend
-                  wrapperStyle={{
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#333',
-                  }}
-                />
                 <Bar dataKey="RegionCount" fill="#4338ca" radius={[10, 10, 10, 10]}>
                   {totalVehicleByRegion.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
@@ -185,6 +171,18 @@ export default function Dashboard() {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
+
+            <div className="sm:ml-10 mt-4">
+              <div className="grid grid-cols-1 gap-2">
+                {totalVehicleByRegion.map((entry, index) => (
+                  <div key={`legend-${index}`} className="flex items-center space-x-2">
+                    <span className="block min-w-4 h-4" style={{ backgroundColor: colors[index % colors.length] }} />
+                    <span className="text-sm font-medium">{`R${index + 1}: ${entry.region}`}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
         </div>
       </div>

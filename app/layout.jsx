@@ -27,7 +27,7 @@ export default function RootLayout({ children }) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const isLandingPage = pathname === "/";
+  const isLandingPage = pathname === "/" || pathname === "/login";
 
   // <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
   return (

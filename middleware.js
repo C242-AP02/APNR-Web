@@ -3,20 +3,27 @@ import { NextResponse, NextRequest } from "next/server";
 export async function middleware(request) {
 
   const url = request.nextUrl.clone();
-
-  if (url.pathname.startsWith("/_next/") || url.pathname.startsWith("/static/") || url.pathname === "/background-landing.png") {
-    return NextResponse.next();
-  }
-
-  const token = request.cookies.get("token");
+  const token = request.cookies.get("name");
+  console.log(token);
   
-  if (!token && url.pathname !== "/") {
-    return NextResponse.redirect(new URL("/", request.url));
+  if (url.pathname === '/login') {
+    if (!url.searchParams.has('redirect')) {
+        return NextResponse.redirect(new URL('/', url.origin).toString());
+    }
+  } else if (!token) {
+      const redirectUrl = new URL('/login', url.origin);
+      redirectUrl.searchParams.append('redirect', url.pathname);
+      return NextResponse.redirect(redirectUrl.toString());
   }
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/((?!.*\/).*)'],
+  matcher: [
+    "/image",
+    "/list",
+    "/list/:id",
+    "/dashboard",
+    "/login"
+  ],
 }; 

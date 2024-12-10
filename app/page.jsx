@@ -63,7 +63,7 @@ export default function LandingPage() {
           <div>
             <button
               onClick={handleClick}
-              className="bg-yellow-500 text-black py-3 px-6 rounded-lg inline-flex items-center space-x-2 hover:bg-yellow-600"
+              className="bg-indigo-700 text-white py-3 px-6 rounded-lg inline-flex items-center space-x-2 hover:bg-indigo-900"
             >
               {user ? (
                 <span>Go To Dashboard</span>
