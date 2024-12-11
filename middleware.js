@@ -4,7 +4,6 @@ export async function middleware(request) {
 
   const url = request.nextUrl.clone();
   const token = request.cookies.get("name");
-  console.log(token);
   
   if (url.pathname === '/login') {
     if (!url.searchParams.has('redirect')) {

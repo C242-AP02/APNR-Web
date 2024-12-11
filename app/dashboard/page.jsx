@@ -156,7 +156,7 @@ export default function Dashboard() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white border p-6 rounded-lg">
+          <div className="bg-white border p-6 rounded-lg overflow-hidden">
             <h2 className="text-xl font-semibold mb-4">Total by Region</h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={totalVehicleByRegion}>

@@ -18,7 +18,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen, className }) 
     <div
       className={`
         ${isSidebarOpen ? "w-full sm:w-64" : "w-0 invisible sm:visible sm:w-20"} 
-        fixed top-0 left-0 h-full bg-white border p-4 transition-all duration-300 z-50
+        fixed top-0 left-0 h-full bg-white border p-4 transition-all duration-300 z-30
         ${className}
       `}
     >

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-const LoadingSpinner = ({ overlay = false }) => {
+export default function LoadingSpinner ({ overlay = false }) {
   useEffect(() => {
     if (overlay) {
       document.body.style.overflow = 'hidden';
@@ -23,5 +23,3 @@ const LoadingSpinner = ({ overlay = false }) => {
     </div>
   );
 };
-
-export default LoadingSpinner;

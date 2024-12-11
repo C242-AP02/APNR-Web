@@ -2,18 +2,26 @@
 
 import { useState, useEffect } from "react";
 import { FaCalendar, FaMapMarkerAlt, FaCar, FaArrowLeft } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { UserAuth } from "@/context/authContext";
 import { BACKEND_URL } from "@/constant/configuration";
 import Link from "next/link";
 import StatusBox from "@/components/StatusBox";
+import ConfirmationModal from "@/components/ConfirmationModal";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import NProgress from "nprogress";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function VehicleDetail() {
   const [vehicle, setVehicle] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const [error, setError] = useState(null);
-  const params = useParams()
+  const params = useParams();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchVehicle = async () => {
@@ -37,8 +45,8 @@ export default function VehicleDetail() {
   
         const data = await response.json();
         setVehicle(data);
-      } catch (err) {
-        setError(err.message);
+      } catch (error) {
+        setError(error.message);
       } finally {
         setLoading(false);
       }
@@ -63,16 +71,41 @@ export default function VehicleDetail() {
     );
   }
   
+  const handleDelete = async (confirm) => {
+    setShowConfirmation(false);
+
+    if(confirm){
+      setDeleteLoading(true);
+      try {
+        const response = await fetch(`${BACKEND_URL}/delete-vehicle/${params.id}`, {
+          method: "DELETE",
+          credentials: "include"
+        });
+  
+        if (!response.ok) {
+          throw new Error("Failed to delete vehicle details.");
+        }
+        NProgress.start();
+        router.replace("/list");
+        toast.success("Vehicle details deleted successfully")
+      } catch (error) {
+        toast.error(error.message);
+      } finally {
+        setDeleteLoading(false);
+      }
+    }
+  }
+
   const formattedDate = new Date(vehicle.timestamp).toLocaleString();
 
   return (
     <div className="w-full p-6 flex justify-center">
-      <div className="bg-white p-8 rounded-lg border max-w-6xl w-full">
+      <div className="bg-white p-4 sm:p-8 rounded-lg border max-w-6xl w-full">
         <div className="mb-3 flex items-center">
           <Link href="/list">
             <div className="flex items-center text-white bg-indigo-600 hover:bg-indigo-700 py-2 px-4 rounded-full shadow-md transition duration-300 ease-in-out transform hover:scale-105">
               <FaArrowLeft className="mr-2" />
-              Kembali
+              Back
             </div>
           </Link>
         </div>
@@ -126,9 +159,28 @@ export default function VehicleDetail() {
                 </div>
               </div>
             </div>
+
+            <div className="mt-5 w-full flex justify-center">
+              <button 
+                className="flex items-center text-white bg-red-600 hover:bg-red-7 py-2 px-4 rounded-full shadow-md transition duration-300 ease-in-out transform hover:scale-105 gap-2" 
+                onClick={() => {
+                  setShowConfirmation(true);
+                }}  
+              >
+                <MdDelete size={20}/> Delete
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
+      {showConfirmation && 
+        <ConfirmationModal handleConfirm={handleDelete} message={"Are you sure want to delete this data?"} />
+      }
+
+      {deleteLoading && 
+        <LoadingSpinner overlay />
+      }
     </div>
   );
 }
