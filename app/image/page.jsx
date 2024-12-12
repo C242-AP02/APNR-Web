@@ -65,14 +65,15 @@ export default function ImagesPage() {
         toast.error("Failed to load image from the provided URL.");
       }
     } else {
+      toast.warn("Invalid image URL")
       setIsValidImage(false);
     }
     setUrlLoading(false);
   };
 
   const handleCheckPlateNumber = async () => {
-    if (!imageFile && !imageUrl) {
-      toast.warn("Please upload an image or enter a valid image URL.");
+    if (!imageFile) {
+      toast.warn("Please upload an image or enter a valid image URL and click submit.");
       return;
     }
 
@@ -174,7 +175,7 @@ export default function ImagesPage() {
                 <button
                   onClick={handleUrlSubmit}
                   disabled={urlLoading}
-                  className={`px-6 py-4 rounded-r-lg transition duration-200 flex items-center justify-center ${
+                  className={`px-4 py-4 rounded-r-lg transition duration-200 flex items-center justify-center ${
                     urlLoading
                       ? "bg-gray-400 text-gray-700 cursor-not-allowed"
                       : "bg-indigo-600 text-white hover:bg-indigo-700"
@@ -186,7 +187,9 @@ export default function ImagesPage() {
                       role="status"
                     />
                   ) : (
-                    <FaFileDownload />
+                    <div className="flex gap-2 justify-center items-center">
+                      <FaFileDownload /> Submit
+                    </div>
                   )}
                 </button>
             </div>
