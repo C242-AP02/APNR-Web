@@ -6,7 +6,6 @@ import React, { useContext, createContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { onAuthStateChanged, signInWithPopup } from "firebase/auth";
 import { BACKEND_URL } from "@/constant/configuration";
-import { getCookie } from "@/utils/util";
 import { toast } from "react-toastify";
 
 const AuthContext = createContext(null);

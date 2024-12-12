@@ -74,7 +74,7 @@ export default function VehicleList() {
           <div className="flex justify-center mt-6">
             <Link
               href={"/image"}
-              className="px-8 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200 shadow-md"
+              className="px-8 py-3 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
             >
               Upload Image
             </Link>

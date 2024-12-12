@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import NProgress from "nprogress";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { UserAuth } from "@/context/authContext";
 
 export default function VehicleDetail() {
   const [vehicle, setVehicle] = useState(null);
@@ -22,6 +23,7 @@ export default function VehicleDetail() {
   const [error, setError] = useState(null);
   const params = useParams();
   const router = useRouter();
+  const { user } = UserAuth();
 
   useEffect(() => {
     const fetchVehicle = async () => {
@@ -53,7 +55,7 @@ export default function VehicleDetail() {
     };
   
     fetchVehicle();
-  }, [params.id]);
+  }, [params.id, user?.uid]);
   
   if (loading) {
     return (
@@ -96,7 +98,13 @@ export default function VehicleDetail() {
     }
   }
 
-  const formattedDate = new Date(vehicle.timestamp).toLocaleString();
+  const formattedDate = new Date(vehicle.timestamp).toLocaleString('id-ID', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 
   return (
     <div className="w-full p-6 flex justify-center">

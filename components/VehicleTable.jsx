@@ -40,7 +40,13 @@ export default function VehicleTable({ plateData, uniqueRegions }) {
           useEffect(() => {
             if (value) {
               const date = new Date(parseInt(value, 10)); 
-              setFormattedDate(date.toLocaleString());
+              setFormattedDate(date.toLocaleString('id-ID', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              }));
             }
           }, [value]);
       

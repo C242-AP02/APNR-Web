@@ -1,12 +1,14 @@
 "use client";
 
 import { BACKEND_URL } from "@/constant/configuration";
+import { UserAuth } from "@/context/authContext";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
 import { BarChart, Bar } from "recharts";
 
 export default function Dashboard() {
+  const { user } = UserAuth();
   const [selectedInterval, setSelectedInterval] = useState("daily");
   const [totalVehicle, setTotalVehicle] = useState(0);
   const [totalVehicleByRegion, setTotalVehicleByRegion] = useState([]);
@@ -33,7 +35,7 @@ export default function Dashboard() {
     };
 
     fetchTotalVehicle();
-  }, []);
+  }, [user?.uid]);
 
   useEffect(() => {
     const fetchTotalVehicleByRegion = async () => {
@@ -57,7 +59,7 @@ export default function Dashboard() {
     };
 
     fetchTotalVehicleByRegion();
-  }, []);
+  }, [user?.uid]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,7 +84,7 @@ export default function Dashboard() {
     }
 
     fetchData();
-  }, [selectedInterval]);
+  }, [selectedInterval, user?.uid]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -107,7 +109,7 @@ export default function Dashboard() {
     };
 
     fetchData();
-  }, [selectedInterval]);
+  }, [selectedInterval, user?.uid]);
 
   return (
     <div className="w-full sm:p-6">
