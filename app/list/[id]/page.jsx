@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { FaCalendar, FaMapMarkerAlt, FaCar, FaArrowLeft } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
+import { useState, useEffect, useCallback } from "react";
+import { FaCalendar, FaMapMarkerAlt, FaCar, FaArrowLeft, FaPaperclip, FaLock } from "react-icons/fa";
+import { MdDelete, MdPublic } from "react-icons/md";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { BACKEND_URL } from "@/constant/configuration";
 import Link from "next/link";
 import StatusBox from "@/components/StatusBox";
@@ -19,44 +19,49 @@ export default function VehicleDetail() {
   const [vehicle, setVehicle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [showPublicConfirmation, setShowPublicConfirmation] = useState(false);
+  const [showPrivateConfirmation, setShowPrivateConfirmation] = useState(false);
   const [error, setError] = useState(null);
   const params = useParams();
   const router = useRouter();
   const { user } = UserAuth();
+  const currentPath = usePathname();
+  const isListPath = currentPath.split("/")[1] === "list"
+  const apiEndpoint = isListPath ? "get-vehicle-details" : "get-public-details"
 
-  useEffect(() => {
-    const fetchVehicle = async () => {
-      try {
-        const response = await fetch(`${BACKEND_URL}/get-vehicle-details/${params.id}`, {
-          method: "GET",
-          credentials: "include"
-        });
+  const fetchVehicle = useCallback(async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/${apiEndpoint}/${params.id}`, {
+        method: "GET",
+        credentials: "include"
+      });
   
-        if (response.status === 401) {
-          throw new Error("You are not authenticated. Please log in.");
-        }
-  
-        if (response.status === 403) {
-          throw new Error("You do not have permission to view this vehicle detail.");
-        }
-  
-        if (!response.ok) {
-          throw new Error("Failed to fetch vehicle details.");
-        }
-  
-        const data = await response.json();
-        setVehicle(data);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
+      if (response.status === 401) {
+        throw new Error("You are not authenticated. Please log in.");
       }
-    };
   
+      if (response.status === 403) {
+        throw new Error("You do not have permission to view this vehicle detail.");
+      }
+  
+      if (!response.ok) {
+        throw new Error("Failed to fetch vehicle details.");
+      }
+  
+      const data = await response.json();
+      setVehicle(data);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [params.id, apiEndpoint]);
+  
+  useEffect(() =>  {
     fetchVehicle();
-  }, [params.id, user?.uid]);
-  
+  }, [fetchVehicle, user?.uid])
+
   if (loading) {
     return (
       <div className="w-full p-6 flex justify-center">
@@ -74,7 +79,7 @@ export default function VehicleDetail() {
   }
   
   const handleDelete = async (confirm) => {
-    setShowConfirmation(false);
+    setShowDeleteConfirmation(false);
 
     if(confirm){
       setDeleteLoading(true);
@@ -98,6 +103,58 @@ export default function VehicleDetail() {
     }
   }
 
+  const handleMakePublic = async (confirm) => {
+    setShowPublicConfirmation(false);
+
+    if(confirm){
+      setDeleteLoading(true);
+      try {
+        const response = await fetch(`${BACKEND_URL}/set-details-public/${params.id}`, {
+          method: "PATCH",
+          credentials: "include"
+        });
+  
+        if (!response.ok) {
+          throw new Error("Failed to make public");
+        }
+        NProgress.start();
+        router.refresh();
+        fetchVehicle(); 
+        toast.success("Vehicle details successfully set to public")
+      } catch (error) {
+        toast.error(error.message);
+      } finally {
+        setDeleteLoading(false);
+      }
+    }
+  }
+
+  const handleMakePrivate = async (confirm) => {
+    setShowPrivateConfirmation(false);
+
+    if(confirm){
+      setDeleteLoading(true);
+      try {
+        const response = await fetch(`${BACKEND_URL}/set-details-private/${params.id}`, {
+          method: "PATCH",
+          credentials: "include"
+        });
+  
+        if (!response.ok) {
+          throw new Error("Failed to make private");
+        }
+        NProgress.start();
+        router.refresh();
+        fetchVehicle(); 
+        toast.success("Vehicle details deleted set to private")
+      } catch (error) {
+        toast.error(error.message);
+      } finally {
+        setDeleteLoading(false);
+      }
+    }
+  }
+
   const formattedDate = new Date(vehicle.timestamp).toLocaleString('id-ID', {
     day: '2-digit',
     month: '2-digit',
@@ -108,15 +165,26 @@ export default function VehicleDetail() {
 
   return (
     <div className="w-full p-6 flex justify-center">
-      <div className="bg-white p-4 sm:p-8 rounded-lg border max-w-6xl w-full">
-        <div className="mb-3 flex items-center">
-          <Link href="/list">
-            <div className="flex items-center text-white bg-indigo-600 hover:bg-indigo-700 py-2 px-4 rounded-full shadow-md transition duration-300 ease-in-out transform hover:scale-105">
-              <FaArrowLeft className="mr-2" />
-              Back
+      <div className="relative bg-white p-4 sm:p-8 rounded-lg border max-w-6xl w-full">
+        
+        {!!vehicle.isPublic && (
+          <div className="absolute p-1 top-0 right-0">
+            <div className="px-2 py-1 bg-green-200 text-green-700 text-xs font-semibold rounded-bl-lg rounded-tr-lg">
+              public
             </div>
-          </Link>
-        </div>
+          </div>
+        )}
+
+        {isListPath && (
+          <div className="mb-3 flex items-center">
+            <Link href="/list">
+              <div className="flex items-center text-white bg-indigo-600 hover:bg-indigo-700 py-2 px-4 rounded-full shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                <FaArrowLeft className="mr-2" />
+                Back
+              </div>
+            </Link>
+          </div>
+        )}
         
         <h1 className="text-3xl font-bold text-indigo-900 mb-8 text-center">
           Vehicle Details
@@ -134,6 +202,7 @@ export default function VehicleDetail() {
             />
           </div>
 
+        {/* Vehicle Information Section */}
           <div className="w-full md:w-2/5">
             <div className="bg-gradient-to-r from-gray-100 via-white to-gray-100 p-4 rounded-lg">
               <h2 className="text-lg font-semibold text-gray-800 mb-4 text-center">
@@ -141,7 +210,6 @@ export default function VehicleDetail() {
               </h2>
 
               <div className="space-y-4">
-                {/* Plate Number */}
                 <div className="flex items-center space-x-3">
                   <FaCar className="text-blue-500 text-lg" />
                   <div>
@@ -168,22 +236,69 @@ export default function VehicleDetail() {
               </div>
             </div>
 
-            <div className="mt-5 w-full flex justify-center">
-              <button 
-                className="flex items-center text-white bg-red-600 hover:bg-red-7 py-2 px-4 rounded-full shadow-md transition duration-300 ease-in-out transform hover:scale-105 gap-2" 
-                onClick={() => {
-                  setShowConfirmation(true);
-                }}  
-              >
-                <MdDelete size={20}/> Delete
-              </button>
-            </div>
+            {isListPath && (
+              <div className="mt-5 w-full flex justify-center gap-2">
+                <button 
+                  className="flex items-center text-white bg-red-600 hover:bg-red-7 py-2 px-4 rounded-full shadow-md transition duration-300 ease-in-out transform hover:scale-105 gap-2" 
+                  onClick={() => {
+                    setShowDeleteConfirmation(true);
+                  }}  
+                >
+                  <MdDelete size={20}/> Delete
+                </button>
+
+                {!!vehicle.isPublic && (
+                  <div className="flex gap-2">
+                    <button 
+                      className="flex items-center text-white bg-green-600 hover:bg-red-7 py-2 px-4 rounded-full shadow-md transition duration-300 ease-in-out transform hover:scale-105 gap-2" 
+                      onClick={() => {
+                        setShowPrivateConfirmation(true);
+                      }}  
+                    >
+                      <FaLock size={20}/> Make Private
+                    </button>
+
+                    <button 
+                      className="flex items-center text-white bg-blue-600 hover:bg-red-7 py-2 px-4 rounded-full shadow-md transition duration-300 ease-in-out transform hover:scale-105 gap-2" 
+                      onClick={async() => {
+                        const currentUrl = window.location.href.replace('list', 'public');
+                        await navigator.clipboard.writeText(currentUrl);
+                        toast.success("Link Copied to Clipboard");
+                      }}  
+                    >
+                      <FaPaperclip size={20}/> Share
+                    </button>
+                  </div>
+                )}
+
+                {!vehicle.isPublic && (
+                  <button 
+                    className="flex items-center text-white bg-green-600 hover:bg-red-7 py-2 px-4 rounded-full shadow-md transition duration-300 ease-in-out transform hover:scale-105 gap-2" 
+                    onClick={() => {
+                      setShowPublicConfirmation(true);
+                    }}  
+                  >
+                    <MdPublic size={20}/> Make Public
+                  </button>
+                )}
+                
+              </div>
+            )}
+
           </div>
         </div>
       </div>
 
-      {showConfirmation && 
+      {showDeleteConfirmation && 
         <ConfirmationModal handleConfirm={handleDelete} message={"Are you sure want to delete this data?"} />
+      }
+
+      {showPublicConfirmation && 
+        <ConfirmationModal handleConfirm={handleMakePublic} message={"Are you sure want to make it public"} />
+      }
+
+      {showPrivateConfirmation && 
+        <ConfirmationModal handleConfirm={handleMakePrivate} message={"Are you sure want to make it private"} />
       }
 
       {deleteLoading && 

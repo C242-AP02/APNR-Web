@@ -191,7 +191,7 @@ export default function VehicleTable({ plateData, uniqueRegions }) {
   };
 
   return (
-    <>
+    <div>
       {/* Filter Section */}
       {!filters.items?.length && (
       // lg:border-none lg:p-0 lg:shadow-none lg:top-0 lg:bg-white lg:relative lg:flex lg:flex-row lg:space-x-4 lg:space-y-0 lg:my-4
@@ -333,7 +333,7 @@ export default function VehicleTable({ plateData, uniqueRegions }) {
 
       {/* Pagination */}
       {!filters.items?.length && (
-        <div className="flex space-x-2 mt-4">
+        <div className="flex justify-center space-x-2 mt-4">
           {getPagination().map((item, index) => (
             <button
               key={index}
@@ -364,6 +364,6 @@ export default function VehicleTable({ plateData, uniqueRegions }) {
           </button>
         </div>
       )}
-    </>
+    </div>
   )
 }

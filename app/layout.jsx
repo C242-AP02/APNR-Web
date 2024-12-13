@@ -11,6 +11,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Sidebar from '@/components/Sidebar';
 import TopBar from '@/components/Topbar';
+import { menuItems } from '@/constant/menuitems';
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -27,7 +28,15 @@ export default function RootLayout({ children }) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const isLandingPage = pathname === "/" || pathname === "/login";
+  // const isLandingPage = pathname === "/" || pathname === "/login";
+
+  const isMainPage = menuItems.some(item => {
+    if (item.url.includes(":")) {
+      const dynamicPathRegex = new RegExp(`^${item.url.split("/:")[0]}/[^/]+$`);
+      return dynamicPathRegex.test(pathname);
+    }
+    return pathname === item.url;
+  });
 
   // <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
   return (
@@ -41,16 +50,16 @@ export default function RootLayout({ children }) {
           <Sidebar
             isSidebarOpen={isSidebarOpen} 
             setIsSidebarOpen={setIsSidebarOpen}
-            className={`${isLandingPage ? "hidden" : ""}`}
+            className={`${!isMainPage ? "hidden" : ""}`}
           />
 
-          <div className={`w-full ${isLandingPage ? "" : (isSidebarOpen  ? "sm:pl-64" : "sm:pl-20")}`}>
+          <div className={`w-full ${!isMainPage ? "" : (isSidebarOpen  ? "sm:pl-64" : "sm:pl-20")}`}>
             <TopBar 
               isSidebarOpen={isSidebarOpen} 
               setIsSidebarOpen={setIsSidebarOpen} 
-              className={`${isLandingPage ? "hidden" : ""}`}  
+              className={`${!isMainPage ? "hidden" : ""}`}  
             />
-            <main className={`${isLandingPage ? "" : "flex mt-24 w-full"}`}>
+            <main className={`${!isMainPage ? "" : "flex mt-24 w-full"}`}>
               <Suspense>
                 {children}
               </Suspense>
