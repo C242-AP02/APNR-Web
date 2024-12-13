@@ -1,36 +1,126 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Automatic Plate Number Recognition (APNR) - Web
 
-## Getting Started
+This project is a **Next.js application** designed to detect vehicle license plates from images. It uses the following backend and machine learning repositories to process and manage data:
 
-First, run the development server:
+- **Backend API**: [APNR-Backend](https://github.com/C242-AP02/APNR-Backend)  
+  Provides endpoints for managing detected vehicle data and integrating with Firestore and Google Cloud Storage.
 
+- **Machine Learning Model**: [APNR-ML](https://github.com/C242-AP02/APNR-ML)  
+  Handles the core license plate detection functionality.
+
+---
+
+## Features
+
+- **Upload Image**  
+  Upload an image to detect license plates. The plate details are processed via the [APNR-ML](https://github.com/C242-AP02/APNR-ML) and saved using the [APNR-Backend](https://github.com/C242-AP02/APNR-Backend).
+
+- **List Detected Vehicles**  
+  View a list of detected vehicles with plate details.
+
+- **Statistics**  
+  Access vehicle detection statistics by:
+  - Day
+  - Month
+  - Region
+
+- **Share Detected Vehicle Details**  
+  Share links to specific vehicle details.
+
+- **Google Authentication**  
+  Log in using a Google account for easy access.
+
+
+---
+
+## Prerequisites
+
+1. **Node.js** (LTS recommended)  
+   Install from [Node.js Official Website](https://nodejs.org/).
+
+2. **Backend API**  
+   - Clone and set up the [APNR-Backend](https://github.com/C242-AP02/APNR-Backend) repository.
+   - Follow its installation instructions and ensure it is running.
+
+3. **Machine Learning Model**  
+   - Clone and set up the [APNR-ML](https://github.com/C242-AP02/APNR-ML) repository.
+   - Follow its installation instructions to deploy the model server.
+
+4. **Firebase Project**   
+    For firebase Authentication
+
+## Installation
+
+Follow these steps to set up and run the project locally.
+
+### 1. Clone the Repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/C242-AP02/APNR-Web.git
+cd APNR-Web
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install Dependencies
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 3. Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Configure Backend URL**  
+   Open `constant/configuration.js` and replace the `BACKEND_URL` value with the link to your local **APNR-Backend** server.  
 
-## Learn More
+   Example:  
+   ```javascript
+   export const BACKEND_URL = "http://localhost:5000"; 
+   ```
+2. **Configure Firebase**   
+    Replace the Firebase configuration in `utils/firebase.js` with your own Firebase project settings.
 
-To learn more about Next.js, take a look at the following resources:
+    Example:
+    ```javascript
+    const firebaseConfig = {
+        apiKey: "your-firebase-api-key",
+        authDomain: "your-auth-domain",
+        projectId: "your-project-id",
+        storageBucket: "your-storage-bucket",
+        messagingSenderId: "your-messaging-sender-id",
+        appId: "your-app-id",
+        measurementId: "your-measurement-id",
+    };
+    ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 4. Run Development Server
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+To start the project, you have the following options:
 
-## Deploy on Vercel
+1. **Development Mode**  
+   Run the development server with hot-reloading:  
+   ```bash
+   npm run dev
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. **Production Build**   
+    Create a production-optimized build:
+    ```bash
+    npm run build
+    ```
+    Run production server:
+    ```
+    npm start
+    ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The web will start running on http://localhost:3000.
+
+
+
+
+
+
+
+
+
+
+
+
+
