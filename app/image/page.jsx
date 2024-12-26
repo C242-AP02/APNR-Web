@@ -155,6 +155,24 @@ export default function ImagesPage() {
               </p>
             </label>
           </div>
+
+<div className="flex justify-center mt-6">
+  <input
+    type="file"
+    accept="image/*"
+    capture="environment"
+    onChange={handleImageUpload}
+    className="hidden"
+    id="camera-upload"
+  />
+  <label
+    htmlFor="camera-upload"
+    className="py-3 px-8 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 transition duration-300 ease-in-out transform hover:scale-105 shadow-md cursor-pointer"
+  >
+    Take Photo
+  </label>
+</div>
+
           <div className="bg-white p-6 rounded-lg mt-6 max-w-5xl w-full">
             <label
               htmlFor="image-url"
